@@ -1,14 +1,13 @@
 # Guia do AdvogaSUS
 O presente documento tem por objetivo auxiliar novos desenvolvedores do projeto AdvogaSUS a entenderem o propósito e a estrutura do sistema de software que estarão desenvolvendo.
 
-Uma das principais mensagens que eu gostaria de passar a qualquer desenvolvedor que venha a ter contato com esse sistema é a de que, em sua essência, o projeto
+Uma das principais mensagens que eu desejo transmitir a qualquer desenvolvedor que venha a ter contato com esse sistema é que, em sua essência, o projeto
 AdvogaSUS é bastante simples e pode ser concluído rapidamente, SE for desenvolvido de maneira organizada por uma equipe bem coordenada. Não há motivos para temer a tarefa em mãos.
 
 ## Propósito:
 O SUS (Sistema Único de Saude) nem sempre possui capacidade, insumos ou infraestrutura para prestar todos os procedimentos médicos demandados pela população. Nesses casos, o estado
-paga para que esses procedimentos sejam realizados por um estabelecimento de saúde da rede privada. O cliente que solicitou o desenvolvimento do AdvogaSUS é um advogado que atende
-a esses hospitais particulares que defendem a tese de que o valor pago eles em função da realização de um conjunto de procedimentos é menor do que aquele que
-DEVERIA ter sido pago. Portanto, esses hospitais privados contratantes do nosso cliente entram na justiça solicitando o pagamento do que ainda falta pagar (VALOR QUE DEVERIA SER PAGO)-(VALOR EFETIVAMENTE PAGO).
+paga para que essas operações sejam realizadas por um estabelecimento de saúde da rede privada. O cliente que solicitou o desenvolvimento do AdvogaSUS é um advogado que atende
+a esses hospitais particulares que defendem a tese de que o valor pago a eles em função da realização de um conjunto de procedimentos é menor do que aquele que DEVERIA ter sido pago. Portanto, esses hospitais privados contratantes do nosso cliente entram na justiça solicitando o pagamento do que ainda falta pagar (VALOR QUE DEVERIA SER PAGO)-(VALOR EFETIVAMENTE PAGO).
 
 O objetivo final do sistema AdvogaSUS é portanto:
 Ser capaz de calcular o valor que foi pago a um hospital em uma certa janela temporal bem como o valor que DEVERIA ter sido pago nessa mesma janela de tempo.
@@ -18,7 +17,8 @@ Por fim, o sistema deve gerar um laudo em pdf com os resultados compilados.
 ## O valor que foi pago:
 Para definir o valor pago pelo estado ao hospital em uma dada janela de tempo, é preciso ter os registros de todos os procedimentos realizados no período. O SUS disponibiliaza essas informações ao público
 por meio de um sistema chamado dataSUS. Esse repositório de dados públicos pode ser acessado por meio de uma interface web com o usuário ou com um FTP (file transfer protocol).
-O link de acesso para o FTP é "ftp://ftp.datasus.gov.br/".
+O link de acesso para o FTP é "ftp://ftp.datasus.gov.br/". 
+- SUGESTÃO: Abrir o ftp em um gerenciador de arquivos
 
 Dentro da estrutura de arquivos do servidor FTP, os dados relevantes para a definição dos procedimentos realizados por um hospital encontram-se
 nos seguintes paths: "/dissemin/publicos/SIASUS" e "/dissemin/publicos/SIHSUS". Esses são os caminhos que levam para os registros históricos de procedimentos do SIA (sistema de informações ambulatoriais) e
@@ -81,9 +81,69 @@ Os dois tipos de tabela relevantes para o projeto são:
 Abaixo estão descritas os elementos relevantes da estrutura dos dois tipos de tabela. Vale notar que essa estrutura só é válida para os arquivos mais recentes (posteriores a 2008, se não me falha a memória):
 
 ### Estrutura dos arquivos PA
-Os arquivos PA possuem as seguintes colunas: 
+Os as tabelas do SIA com o prefixo PA possuem as seguintes colunas: 
 PA_CODUNI,PA_GESTAO,PA_CONDIC,PA_UFMUN,PA_REGCT,PA_INCOUT,PA_INCURG,PA_TPUPS,PA_TIPPRE,PA_MN_IND,PA_CNPJCPF,PA_CNPJMNT,PA_CNPJ_CC,PA_MVM,PA_CMP,PA_PROC_ID,PA_TPFIN,PA_SUBFIN,PA_NIVCPL,PA_DOCORIG,PA_AUTORIZ,PA_CNSMED,PA_CBOCOD,PA_MOTSAI,PA_OBITO,PA_ENCERR,PA_PERMAN,PA_ALTA,PA_TRANSF,PA_CIDPRI,PA_CIDSEC,PA_CIDCAS,PA_CATEND,PA_IDADE,IDADEMIN,IDADEMAX,PA_FLIDADE,PA_SEXO,PA_RACACOR,PA_MUNPCN,PA_QTDPRO,PA_QTDAPR,PA_VALPRO,PA_VALAPR,PA_UFDIF,PA_MNDIF,PA_DIF_VAL,NU_VPA_TOT,NU_PA_TOT,PA_INDICA,PA_CODOCO,PA_FLQT,PA_FLER,PA_ETNIA,PA_VL_CF,PA_VL_CL,PA_VL_INC,PA_SRV_C,PA_INE,PA_NAT_JUR
+
 Dessas colunas, as que as de maior relevância são:
-- PA_CODUNI: esse é a coluna que contém o código identificador do hospital em questão, o cnes ou "código nacional de estabelacimento de saúde"
+- **PA_CODUNI**: esse é a coluna que contém o código identificador do hospital em questão, o cnes ou "código nacional de estabelacimento de saúde"
+- **PA_VALAPR:**: indica o valor total aprovado e pago por aquela linha da tabela, representativa de um procedimento ou de mais de um procedimento de mesmo tipo.
+- **PA_PROC_ID**: Esse é o código identificador de procedimento no SIA. Esse campo é relevante para a aplicação do método TUNEP, como foi descutido em um capítulo anterior.
+
+
 ### Estrutura dos arquivos SP
-Os arquivos SP possu
+Os as tabelas do SIH com o prefixo SP possuem as seguintes colunas: 
+SP_GESTOR,SP_UF,SP_AA,SP_MM,SP_CNES,SP_NAIH,SP_PROCREA,SP_DTINTER,SP_DTSAIDA,SP_NUM_PR,SP_TIPO,SP_CPFCGC,SP_ATOPROF,SP_TP_ATO,SP_QTD_ATO,SP_PTSP,SP_NF,SP_VALATO,SP_M_HOSP,SP_M_PAC,SP_DES_HOS,SP_DES_PAC,SP_COMPLEX,SP_FINANC,SP_CO_FAEC,SP_PF_CBO,SP_PF_DOC,SP_PJ_DOC,IN_TP_VAL,SEQUENCIA,REMESSA,SERV_CLA,SP_CIDPRI,SP_CIDSEC,SP_QT_PROC,SP_U_AIH
+
+Dessas colunas, as que as de maior relevância são:
+- ****: esse é a coluna que contém o código identificador do hospital em questão, o cnes ou "código nacional de estabelacimento de saúde"
+- **SP_VALATO**: indica o valor total aprovado e pago por aquela linha da tabela, representativa de um procedimento ou de mais de um procedimento de mesmo tipo.
+- **SP_ATOPROF:**: Esse é o código identificador de procedimento no SIA. Esse campo é relevante para a aplicação do método TUNEP, como foi descutido em um capítulo anterior.
+
+
+## Estrutura do script de processamento 
+O programa que realiza o processamento dos dados do sus com o propósito de gerar o laudo e os arquivos csv requsitados está quase inteiramente contido em um único arquivo, "main.py".
+Dentro desse arquivo a maior parte das linhas de código enconta-se dividida em classes que desempenham funções específicas dentro do programa. Abaixo encontra-se uma breve explicação
+de cada uma dessas classes.
+
+### ProjPaths
+Essa classe é responsável por definir, criar, e gerênciar as pastas que o programa irá utilizar para armazenar os dados relevantes à sua execução. A principal função dentro dessa classe é a função init. Esta função realiza as seguintes operações:
+- Define quais são os endereços dos diretórios do programa relativos ao arquivo principal ("main.py"). 
+- Cria os diretórios que ainda não foram criados
+- Esvazia os diretórios, caso eles já tivessem sido criados e preenchidos em execuções anteriores do programa (evita conflitos de arquivo)
+
+### ProjParams
+Armazena os parâmetros passados ao programa de forma que eles estejam disponíveis às outras classes através de atributos estáticos com nomes descritivos como:
+```
+CNES: str = "0000000"
+STATE: str = "AC"
+SYSTEM:str = "SIA"
+...
+NOME_FANTASIA: str = "Nome Fantasia"
+NUMERO_PROCESSO: str = "Número Processo"
+```
+
+### InterestRate:
+Essa classe disponibiliza métodos para que se possa aplicar correção monetária no programa. Os índices de correção aplicados são:
+- O IPCAE até dezembro de 2022 
+- A SELIC a partir dessa data
+
+Uma Observação importante a respeito da aplicação da correção monetária no programa é que esta deve ser aplicada de forma simples, em comformidade com aquilo que prescreve o manual de cálculos da Justiça Federal.
+
+As funções internas a classe são:
+
+#### **load_selic():**
+Puxa os dados históricos da SELIC por meio da API do Banco Central. Além disso, essa função salva esses dados em um arquivo para que, caso a API do Banco Central acabe caindo (o que acontece com alguma freqência) o programa possa puxar esses dados de uma execução anterior.
+
+#### **cumulative_selic():**
+É a função responsável por aplicar a taxa SELIC dado um mês de início e de fim.
+
+#### **rate_until_01_2022():**
+É a função responsável por aplicar o IPCAE da data de início especificada até o mês dezembro de 2021.
+
+#### **complete_rate_split():**
+Essa função combina as duas funções anteriores para, dados os meses de início e de fim da aplicação da correção monetária, fornecer uma tupla contendo, respectivamente, os seguintes índices em uma tupla:
+
+(a correção decorrente do IPCAE, a correção decorrente da SELIC, os dois índices combinados em única taxa)
+
+#### **complete_rate():**
+Essa função é exatamente igual a função "complete_rate_split()", contudo, nessa versão da função, apenas a taxa combinada (IPCAE * SELIC) é retornada.
